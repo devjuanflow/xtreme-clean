@@ -49,7 +49,7 @@ export default function LandingPage() {
   const [sliderPos, setSliderPos] = useState(50);
 
   useEffect(() => {
-    // Registro del Service Worker para PWA[cite: 2]
+    // Registro del Service Worker para PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((reg) => console.log('Service Worker registrado con éxito:', reg.scope))
@@ -205,9 +205,9 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#051610] text-slate-100 font-sans selection:bg-[#c5a059] selection:text-slate-950">
+    <div className="min-h-screen bg-[#051610] text-slate-100 font-sans selection:bg-[#c5a059] selection:text-slate-950 pb-20 md:pb-0">
       
-      {/* HEADER ADAPTADO MÓVIL Y PC */}
+      {/* HEADER */}
       <header className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/95 backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
           {config.logoTipo === 'imagen' && config.logoImagenUrl ? (
@@ -690,6 +690,41 @@ export default function LandingPage() {
         <p className="font-bold text-[#e6ca84]">🕒 Horario de Atención: {config.horario}</p>
         <p>{config.textoFooter}</p>
       </footer>
+
+      {/* MENÚ INFERIOR MÓVIL (BOTTOM NAVIGATION) EN LA PÁGINA PRINCIPAL */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#09261d]/95 backdrop-blur-md border-t border-[#c5a059]/30 px-2 py-3 flex justify-around items-center z-50 shadow-2xl">
+        <a 
+          href="#servicios" 
+          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-[#e6ca84] transition-colors"
+        >
+          <span className="text-base">🧽</span>
+          <span>Servicios</span>
+        </a>
+
+        <a 
+          href="#galeria" 
+          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-[#e6ca84] transition-colors"
+        >
+          <span className="text-base">✨</span>
+          <span>Resultados</span>
+        </a>
+
+        <a 
+          href="#cotizador" 
+          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-[#e6ca84] transition-colors"
+        >
+          <span className="text-base">🚀</span>
+          <span>Cotizador</span>
+        </a>
+
+        <Link 
+          href="/admin/login" 
+          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-[#e6ca84] transition-colors"
+        >
+          <span className="text-base">🔒</span>
+          <span>Admin</span>
+        </Link>
+      </nav>
     </div>
   );
 }
