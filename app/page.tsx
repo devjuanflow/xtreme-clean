@@ -385,26 +385,26 @@ export default function LandingPage() {
               )}
 
               <div className="space-y-3 pt-2 border-t border-[#c5a059]/20">
-                <label className="block text-xs font-bold text-[#e6ca84] uppercase tracking-wider">3. Selecciona tu Municipio o Zona de Cobertura</label>
+                <label className="block text-xs font-bold text-[#e6ca84] uppercase tracking-wider">3. Selecciona tu Municipio de Cobertura</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {municipios.map(m => (
                     <button
                       type="button"
                       key={m.id}
                       onClick={() => abrirModalZona(m)}
-                      className={`p-4 rounded-xl border text-left flex justify-between items-center transition-all cursor-pointer ${
+                      className={`p-4 rounded-2xl border text-left flex justify-between items-center transition-all cursor-pointer ${
                         municipioSeleccionado?.id === m.id 
                           ? 'bg-[#c5a059] text-slate-950 border-[#e6ca84] font-extrabold shadow-md' 
                           : 'bg-[#051610] text-slate-300 border-[#c5a059]/20 hover:border-[#c5a059]/50'
                       }`}
                     >
-                      <div>
-                        <span className="text-[10px] block uppercase font-mono opacity-80">
-                          {m.tipo === 'municipio' ? '🏙️ Municipio' : '🏠 Zona'}
+                      <div className="space-y-1">
+                        <span className={`text-[9px] block uppercase font-mono tracking-wider ${municipioSeleccionado?.id === m.id ? 'text-slate-900 font-bold' : 'text-[#e6ca84]'}`}>
+                          🏙️ Municipio
                         </span>
-                        <span className="text-xs font-bold">{m.nombre}</span>
+                        <span className="text-xs font-bold block leading-snug">{m.nombre}</span>
                       </div>
-                      <span className={`text-xs font-mono font-bold ${municipioSeleccionado?.id === m.id ? 'text-slate-950' : 'text-[#e6ca84]'}`}>
+                      <span className={`text-xs font-mono font-bold shrink-0 ml-2 ${municipioSeleccionado?.id === m.id ? 'text-slate-950' : 'text-[#e6ca84]'}`}>
                         {m.recargo > 0 ? `+$${m.recargo.toLocaleString()}` : 'Gratis'}
                       </span>
                     </button>
@@ -416,7 +416,7 @@ export default function LandingPage() {
                     <span className="text-[#e6ca84] font-bold">{detalleUbicacionFinal}</span>
                   </div>
                   <button type="button" onClick={() => municipioSeleccionado && abrirModalZona(municipioSeleccionado)} className="px-3 py-1.5 bg-[#09261d] text-[#e6ca84] border border-[#c5a059]/40 rounded-lg text-[11px] font-bold">
-                    Cambiar Barrio / Dirección ✏️
+                    Añadir Dirección Exacta ✏️
                   </button>
                 </div>
               </div>
@@ -669,7 +669,7 @@ export default function LandingPage() {
               </div>
 
               <div className="p-3 bg-[#051610] border border-[#c5a059]/20 rounded-xl text-xs text-[#e6ca84]">
-                ℹ️ Recargo por traslado a esta zona: <span className="font-mono font-bold">${zonaEnEdicion.recargo.toLocaleString()} COP</span>
+                ℹ️ Recargo por traslado a este municipio: <span className="font-mono font-bold">${zonaEnEdicion.recargo.toLocaleString()} COP</span>
               </div>
 
               <div className="flex gap-3 pt-2">

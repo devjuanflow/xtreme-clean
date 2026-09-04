@@ -161,25 +161,29 @@ export interface SubopcionServicio {
     localStorage.setItem('xtreme_servicios_catalogo', JSON.stringify(servicios));
     }
 
-    // Municipios y Barrios de Cobertura
+    // Municipios de Cobertura Oficiales (Solo los 4 principales)
     export function obtenerMunicipios(): MunicipioCobertura[] {
     if (typeof window === 'undefined') return [];
     const guardados = localStorage.getItem('xtreme_municipios_cobertura');
     if (guardados) {
         try {
-        return JSON.parse(guardados);
-        } catch {
-        return [];
+        const parsed = JSON.parse(guardados);
+        // Forzar a que solo devuelva los 4 principales si tenía registros viejos
+        if (Array.isArray(parsed) && parsed.length > 4) {
+            const filtrados = parsed.filter((m: MunicipioCobertura) => 
+            ['Villavicencio', 'Restrepo', 'Acacías', 'Guamal'].some(nombre => m.nombre.includes(nombre))
+            );
+            if (filtrados.length > 0) return filtrados;
+        } else if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
         }
+        } catch {}
     }
     const iniciales: MunicipioCobertura[] = [
-        { id: '1', nombre: 'Villavicencio (Urbano)', recargo: 0, activo: true, tipo: 'municipio' },
-        { id: '2', nombre: 'Barzal / Centro / Villacentro', recargo: 0, activo: true, tipo: 'barrio' },
-        { id: '3', nombre: 'Sikuani / La Grama / Caudal', recargo: 0, activo: true, tipo: 'barrio' },
-        { id: '4', nombre: 'Ciudad Porfía / Catama', recargo: 10000, activo: true, tipo: 'barrio' },
-        { id: '5', nombre: 'Restrepo', recargo: 20000, activo: true, tipo: 'municipio' },
-        { id: '6', nombre: 'Acacías', recargo: 25000, activo: true, tipo: 'municipio' },
-        { id: '7', nombre: 'Guamal', recargo: 35000, activo: true, tipo: 'municipio' }
+        { id: '1', nombre: 'Villavicencio', recargo: 0, activo: true, tipo: 'municipio' },
+        { id: '2', nombre: 'Restrepo', recargo: 20000, activo: true, tipo: 'municipio' },
+        { id: '3', nombre: 'Acacías', recargo: 25000, activo: true, tipo: 'municipio' },
+        { id: '4', nombre: 'Guamal', recargo: 35000, activo: true, tipo: 'municipio' }
     ];
     localStorage.setItem('xtreme_municipios_cobertura', JSON.stringify(iniciales));
     return iniciales;
