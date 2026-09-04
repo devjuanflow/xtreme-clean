@@ -207,27 +207,23 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#051610] text-slate-100 font-sans selection:bg-[#c5a059] selection:text-slate-950 pb-20 md:pb-0">
       
-      {/* HEADER */}
-      <header className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/95 backdrop-blur-md z-50">
+      {/* HEADER: Oculto en móviles (hidden), visible en PC (md:flex) */}
+      <header className="hidden md:flex max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-18 sm:h-24 items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/95 backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
           {config.logoTipo === 'imagen' && config.logoImagenUrl ? (
             <img src={config.logoImagenUrl} alt="Logo" className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xl" />
           ) : (
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#c5a059] to-[#e6ca84] flex items-center justify-center text-slate-950 font-black text-sm sm:text-lg shadow-xl">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#c5a059] to-[#e6ca84] flex items-center justify-center text-slate-950 font-black text-sm sm:text-lg shadow-xl shrink-0">
               {config.logoTexto || 'XC'}
             </div>
           )}
-          <div className="hidden xs:block">
-            <span className="block font-black text-white text-xs sm:text-lg tracking-wider">{config.nombreEmpresa || 'XTREME CLEAN'}</span>
-            <span className="block text-[7px] sm:text-[10px] text-[#e6ca84] uppercase tracking-widest font-semibold">{config.subtituloEmpresa || 'LAVANDERÍA DE MUEBLES'}</span>
-          </div>
         </div>
 
-        <nav className="flex items-center gap-1.5 sm:gap-6 text-[8.5px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest text-slate-300">
-          <a href="#servicios" className="hover:text-[#e6ca84] transition-colors px-1">Servicios</a>
-          <a href="#galeria" className="hover:text-[#e6ca84] transition-colors px-1">Resultados</a>
-          <a href="#cotizador" className="hover:text-[#e6ca84] transition-colors px-1">Cotizador</a>
-          <Link href="/admin/login" className="px-2 py-1.5 sm:px-4 sm:py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md flex items-center gap-1">
+        <nav className="flex items-center gap-2 sm:gap-6 text-[9.5px] sm:text-xs font-bold uppercase tracking-wider text-slate-300">
+          <a href="#servicios" className="hover:text-[#e6ca84] transition-colors">Servicios</a>
+          <a href="#galeria" className="hover:text-[#e6ca84] transition-colors">Resultados</a>
+          <a href="#cotizador" className="hover:text-[#e6ca84] transition-colors">Cotizador</a>
+          <Link href="/admin/login" className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md flex items-center gap-1 shrink-0">
             <span>🔒</span> <span>Admin</span>
           </Link>
         </nav>
@@ -690,41 +686,6 @@ export default function LandingPage() {
         <p className="font-bold text-[#e6ca84]">🕒 Horario de Atención: {config.horario}</p>
         <p>{config.textoFooter}</p>
       </footer>
-
-      {/* MENÚ INFERIOR MÓVIL (BOTTOM NAVIGATION) EN LA PÁGINA PRINCIPAL */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#09261d]/95 backdrop-blur-md border-t border-[#c5a059]/30 px-2 py-3 flex justify-around items-center z-50 shadow-2xl">
-        <a 
-          href="#servicios" 
-          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-[#e6ca84] transition-colors"
-        >
-          <span className="text-base">🧽</span>
-          <span>Servicios</span>
-        </a>
-
-        <a 
-          href="#galeria" 
-          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-[#e6ca84] transition-colors"
-        >
-          <span className="text-base">✨</span>
-          <span>Resultados</span>
-        </a>
-
-        <a 
-          href="#cotizador" 
-          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-slate-300 hover:text-[#e6ca84] transition-colors"
-        >
-          <span className="text-base">🚀</span>
-          <span>Cotizador</span>
-        </a>
-
-        <Link 
-          href="/admin/login" 
-          className="flex flex-col items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-[#e6ca84] transition-colors"
-        >
-          <span className="text-base">🔒</span>
-          <span>Admin</span>
-        </Link>
-      </nav>
     </div>
   );
 }
