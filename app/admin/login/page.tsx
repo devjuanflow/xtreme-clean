@@ -25,11 +25,11 @@ export default function LoginPage() {
             const parsed = JSON.parse(guardados);
             if (Array.isArray(parsed) && parsed.length > 0) {
             listaUsuarios = parsed.map((u: any) => ({
-                usuario: u.usuario,
-                pass: u.pass,
-                nombre: u.nombre,
-                rol: u.rol,
-                permisos: u.permisos
+                usuario: u.usuario || u.username || '',
+                pass: u.pass || u.password || '',
+                nombre: u.nombre || 'Usuario',
+                rol: u.rol || 'Operador',
+                permisos: u.permisos || []
             }));
             }
         } catch {}
