@@ -223,18 +223,18 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-slate-300">
+        <nav className="flex items-center gap-3 sm:gap-6 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-300">
           <a href="#servicios" className="hover:text-[#e6ca84] transition-colors">Servicios</a>
           <a href="#galeria" className="hover:text-[#e6ca84] transition-colors">Resultados</a>
           <a href="#cotizador" className="hover:text-[#e6ca84] transition-colors">Cotizador</a>
-          <Link href="/admin/login" className="px-4 py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md">
+          <Link href="/admin/login" className="px-3 py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md">
             🔒 Admin
           </Link>
         </nav>
 
         <button 
           onClick={() => setModalWhatsAppAbierto(true)}
-          className="px-4 py-2.5 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-lg text-xs flex items-center gap-2 cursor-pointer hover:brightness-110"
+          className="hidden lg:flex px-4 py-2.5 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-lg text-xs items-center gap-2 cursor-pointer hover:brightness-110"
         >
           <span>💬</span> WhatsApp
         </button>
