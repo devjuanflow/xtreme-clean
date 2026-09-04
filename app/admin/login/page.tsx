@@ -1,14 +1,22 @@
 'use client';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function LoginPage() {
-    const router = useRouter();
     const [usuario, setUsuario] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
     const [intentos, setIntentos] = useState(0);
+
+    // Forzar la existencia de usuarios válidos al abrir la página
+    useEffect(() => {
+        const usuariosBase = [
+            { usuario: 'admin', pass: '123456', nombre: 'Admin Principal', rol: 'Administrador', permisos: ['Todo'] },
+            { usuario: 'jortiz', pass: '123456', nombre: 'Juan Ortiz', rol: 'Administrador', permisos: ['Todo'] },
+            { usuario: 'operador', pass: '123456', nombre: 'Carlos Operador', rol: 'Operador', permisos: ['Cotizaciones', 'Agenda'] }
+        ];
+        localStorage.setItem('xtreme_usuarios_sistema', JSON.stringify(usuariosBase));
+    }, []);
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,7 +43,9 @@ export default function LoginPage() {
             } catch {}
         }
 
-        const encontrado = listaUsuarios.find(u => u.usuario.trim().toLowerCase() === usuario.trim().toLowerCase() && u.pass === password);
+        const encontrado = listaUsuarios.find(
+            u => u.usuario.trim().toLowerCase() === usuario.trim().toLowerCase() && u.pass === password
+        );
 
         if (encontrado) {
             localStorage.setItem('xtreme_usuario_actual', JSON.stringify({
@@ -58,7 +68,7 @@ export default function LoginPage() {
                 localStorage.setItem('xtreme_logs_auditoria', JSON.stringify([nuevoLog, ...lista]));
             } catch {}
 
-            // Redirección segura para evitar bucles en Vercel
+            // Redirección directa y limpia para evitar bucles
             window.location.href = '/admin';
         } else {
             setError(true);
