@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface LogReciente {
     id: string;
@@ -24,6 +24,10 @@ export default function AdminDashboard() {
             const u = JSON.parse(rawUser);
             setUsuarioActual(u);
         } catch {}
+        } else {
+        const demoUser = { nombre: 'Admin Principal', rol: 'Administrador', permisos: ['Todo'] };
+        localStorage.setItem('xtreme_usuario_actual', JSON.stringify(demoUser));
+        setUsuarioActual(demoUser);
         }
 
         const guardados = localStorage.getItem('xtreme_logs_auditoria');
