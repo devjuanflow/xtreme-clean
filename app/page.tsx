@@ -49,7 +49,7 @@ export default function LandingPage() {
   const [sliderPos, setSliderPos] = useState(50);
 
   useEffect(() => {
-    // Registro del Service Worker para PWA
+    // Registro del Service Worker para PWA[cite: 2]
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((reg) => console.log('Service Worker registrado con éxito:', reg.scope))
@@ -208,36 +208,35 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#051610] text-slate-100 font-sans selection:bg-[#c5a059] selection:text-slate-950">
       
       {/* HEADER */}
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/90 backdrop-blur-md z-50">
-        <div className="flex items-center gap-3">
+      <header className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/95 backdrop-blur-md z-50">
+        <div className="flex items-center gap-2 sm:gap-3">
           {config.logoTipo === 'imagen' && config.logoImagenUrl ? (
-            <img src={config.logoImagenUrl} alt="Logo" className="w-11 h-11 rounded-xl object-cover shadow-xl" />
+            <img src={config.logoImagenUrl} alt="Logo" className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xl" />
           ) : (
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#c5a059] to-[#e6ca84] flex items-center justify-center text-slate-950 font-black text-lg shadow-xl">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#c5a059] to-[#e6ca84] flex items-center justify-center text-slate-950 font-black text-base sm:text-lg shadow-xl">
               {config.logoTexto || 'XC'}
             </div>
           )}
           <div>
-            <span className="block font-black text-white text-lg tracking-wider">{config.nombreEmpresa || 'XTREME CLEAN'}</span>
-            <span className="block text-[10px] text-[#e6ca84] uppercase tracking-widest font-semibold">{config.subtituloEmpresa || 'LAVANDERÍA DE MUEBLES'}</span>
+            <span className="block font-black text-white text-xs sm:text-lg tracking-wider">{config.nombreEmpresa || 'XTREME CLEAN'}</span>
+            <span className="block text-[8px] sm:text-[10px] text-[#e6ca84] uppercase tracking-widest font-semibold">{config.subtituloEmpresa || 'LAVANDERÍA DE MUEBLES'}</span>
           </div>
         </div>
 
-        <nav className="flex items-center gap-3 sm:gap-6 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-300">
+        <nav className="flex items-center gap-2 sm:gap-6 text-[9px] sm:text-xs font-bold uppercase tracking-widest text-slate-300">
           <a href="#servicios" className="hover:text-[#e6ca84] transition-colors">Servicios</a>
           <a href="#galeria" className="hover:text-[#e6ca84] transition-colors">Resultados</a>
           <a href="#cotizador" className="hover:text-[#e6ca84] transition-colors">Cotizador</a>
-          <Link href="/admin/login" className="px-3 py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md">
+          <button 
+            onClick={() => setModalWhatsAppAbierto(true)}
+            className="px-2 py-1.5 sm:px-4 sm:py-2.5 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-lg text-[9px] sm:text-xs flex items-center gap-1 cursor-pointer hover:brightness-110"
+          >
+            <span>💬</span> <span className="hidden xs:inline">WhatsApp</span>
+          </button>
+          <Link href="/admin/login" className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md text-[9px] sm:text-xs">
             🔒 Admin
           </Link>
         </nav>
-
-        <button 
-          onClick={() => setModalWhatsAppAbierto(true)}
-          className="hidden lg:flex px-4 py-2.5 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-lg text-xs items-center gap-2 cursor-pointer hover:brightness-110"
-        >
-          <span>💬</span> WhatsApp
-        </button>
       </header>
 
       {/* HERO */}
