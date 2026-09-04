@@ -8,73 +8,78 @@ export default function LoginPage() {
     const [error, setError] = useState(false);
     const [intentos, setIntentos] = useState(0);
 
-    // Forzar la existencia de usuarios válidos al abrir la página
+    // Asegurar perfiles de usuario perfectamente sincronizados al cargar
     useEffect(() => {
         const usuariosBase = [
-            { usuario: 'admin', pass: '123456', nombre: 'Admin Principal', rol: 'Administrador', permisos: ['Todo'] },
-            { usuario: 'jortiz', pass: '123456', nombre: 'Juan Ortiz', rol: 'Administrador', permisos: ['Todo'] },
-            { usuario: 'operador', pass: '123456', nombre: 'Carlos Operador', rol: 'Operador', permisos: ['Cotizaciones', 'Agenda'] }
+            { id: '1', nombre: 'Admin Principal', username: 'admin', usuario: 'admin', password: '123456', pass: '123456', rol: 'Administrador', permisos: ['Todo'] },
+            { id: '2', nombre: 'Juan Ortiz', username: 'jortiz', usuario: 'jortiz', password: '123456', pass: '123456', rol: 'Administrador', permisos: ['Todo'] },
+            { id: '3', nombre: 'Carlos Operador', username: 'operador', usuario: 'operador', password: '123456', pass: '123456', rol: 'Operador', permisos: ['Cotizaciones', 'Agenda'] }
         ];
         localStorage.setItem('xtreme_usuarios_sistema', JSON.stringify(usuariosBase));
     }, []);
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
+        setError(false);
         
         const guardados = localStorage.getItem('xtreme_usuarios_sistema');
-        let listaUsuarios = [
-            { usuario: 'admin', pass: '123456', nombre: 'Admin Principal', rol: 'Administrador', permisos: ['Todo'] },
-            { usuario: 'jortiz', pass: '123456', nombre: 'Juan Ortiz', rol: 'Administrador', permisos: ['Todo'] },
-            { usuario: 'operador', pass: '123456', nombre: 'Carlos Operador', rol: 'Operador', permisos: ['Cotizaciones', 'Agenda'] }
-        ];
-
-        if (guardados) {
-            try {
-                const parsed = JSON.parse(guardados);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    listaUsuarios = parsed.map((u: any) => ({
-                        usuario: u.usuario || u.username || '',
-                        pass: u.pass || u.password || '',
-                        nombre: u.nombre || 'Usuario',
-                        rol: u.rol || 'Operador',
-                        permisos: u.permisos || []
-                    }));
-                }
-            } catch {}
+        let listaUsuarios = [];
+        
+        try {
+            listaUsuarios = guardados ? JSON.parse(guardados) : [];
+        } catch {
+            listaUsuarios = [];
         }
 
-        const encontrado = listaUsuarios.find(
-            u => u.usuario.trim().toLowerCase() === usuario.trim().toLowerCase() && u.pass === password
-        );
+        // Si la lista está vacía, metemos los predeterminados por seguridad
+        if (listaUsuarios.length === 0) {
+            listaUsuarios = [
+                { nombre: 'Admin Principal', username: 'admin', usuario: 'admin', password: '123456', pass: '123456', rol: 'Administrador', permisos: ['Todo'] },
+                { nombre: 'Juan Ortiz', username: 'jortiz', usuario: 'jortiz', password: '123456', pass: '123456', rol: 'Administrador', permisos: ['Todo'] },
+                { nombre: 'Carlos Operador', username: 'operador', usuario: 'operador', password: '123456', pass: '123456', rol: 'Operador', permisos: ['Cotizaciones', 'Agenda'] }
+            ];
+        }
+
+        const inputUsuario = usuario.trim().toLowerCase();
+        const inputPass = password.trim();
+
+        // Buscar coincidencia flexible contemplando 'usuario', 'username', 'pass' y 'password'
+        const encontrado = listaUsuarios.find((u: any) => {
+            const uName = (u.usuario || u.username || '').trim().toLowerCase();
+            const uPass = (u.pass || u.password || '').trim();
+            return uName === inputUsuario && uPass === inputPass;
+        });
 
         if (encontrado) {
-            localStorage.setItem('xtreme_usuario_actual', JSON.stringify({
-                nombre: encontrado.nombre,
-                rol: encontrado.rol,
-                permisos: encontrado.permisos
-            }));
+            const datosSesion = {
+                nombre: encontrado.nombre || 'Administrador',
+                rol: encontrado.rol || 'Administrador',
+                permisos: encontrado.permisos || ['Todo']
+            };
 
-            // Registrar inicio de sesión exitoso en auditoría
+            localStorage.setItem('xtreme_usuario_actual', JSON.stringify(datosSesion));
+
+            // Registrar log de auditoría
             const logsGuardados = localStorage.getItem('xtreme_logs_auditoria') || '[]';
             try {
                 const lista = JSON.parse(logsGuardados);
                 const nuevoLog = {
                     id: Date.now().toString(),
-                    usuario: encontrado.nombre,
-                    rol: encontrado.rol,
+                    usuario: datosSesion.nombre,
+                    rol: datosSesion.rol,
                     accion: 'Inicio de sesión autorizado en el sistema CMS',
                     fecha: new Date().toLocaleString()
                 };
                 localStorage.setItem('xtreme_logs_auditoria', JSON.stringify([nuevoLog, ...lista]));
             } catch {}
 
-            // Redirección directa y limpia para evitar bucles
+            // Redirección completa garantizada
             window.location.href = '/admin';
         } else {
             setError(true);
             setIntentos(prev => prev + 1);
 
-            // Registrar intento fallido en auditoría
+            // Registrar intento fallido
             const logsGuardados = localStorage.getItem('xtreme_logs_auditoria') || '[]';
             try {
                 const lista = JSON.parse(logsGuardados);
@@ -108,12 +113,10 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen bg-[#051610] flex items-center justify-center p-4 text-slate-100 font-sans relative overflow-hidden">
         
-        {/* DECORACIÓN LUMINOSA DE FONDO */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#c5a059]/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="w-full max-w-md bg-[#09261d] border border-[#c5a059]/40 rounded-3xl p-8 sm:p-10 shadow-2xl relative z-10 space-y-6">
             
-            {/* INSIGNIA DE SEGURIDAD */}
             <div className="flex justify-between items-center">
                 <span className="px-3.5 py-1.5 bg-[#c5a059]/20 border border-[#c5a059]/40 text-[#e6ca84] font-extrabold text-[10px] rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
                     🛡️ Enterprise Secure Access v2.5
@@ -125,7 +128,6 @@ export default function LoginPage() {
                 )}
             </div>
 
-            {/* LOGO Y TÍTULO */}
             <div className="text-center space-y-3">
                 <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-[#c5a059] to-[#e6ca84] flex items-center justify-center text-slate-950 font-black text-2xl shadow-xl">
                     XC
@@ -144,7 +146,6 @@ export default function LoginPage() {
                 </div>
             )}
 
-            {/* FORMULARIO DE ACCESO */}
             <form onSubmit={handleLogin} className="space-y-4">
                 <div>
                     <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
@@ -182,7 +183,6 @@ export default function LoginPage() {
                 </button>
             </form>
 
-            {/* SELECTOR RÁPIDO DE PERFILES */}
             <div className="pt-2 border-t border-[#c5a059]/20 space-y-2">
                 <p className="text-[10px] text-slate-400 uppercase tracking-wider text-center font-bold">Perfiles de Prueba Rápidos:</p>
                 <div className="grid grid-cols-3 gap-2">
@@ -210,7 +210,6 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            {/* ENLACE DE RETORNO */}
             <div className="pt-2 text-center">
                 <Link href="/" className="text-xs text-slate-400 hover:text-[#e6ca84] transition-colors font-medium">
                     ← Volver al sitio principal
