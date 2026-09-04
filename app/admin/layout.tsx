@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import MobileNav from '@/components/MobileNav';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -8,11 +9,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [verificado, setVerificado] = useState(false);
 
     useEffect(() => {
+        // Si estamos en la página de login, permitimos el acceso libre
         if (pathname === '/admin/login') {
             setVerificado(true);
             return;
         }
 
+        // Validamos la sesión activa usando xtreme_usuario_actual
         const auth = localStorage.getItem('xtreme_usuario_actual');
         if (!auth) {
             router.push('/admin/login');
@@ -21,6 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
     }, [pathname, router]);
 
+    // Pantalla de carga mientras se valida el almacenamiento local
     if (!verificado && pathname !== '/admin/login') {
         return (
             <div className="min-h-screen bg-[#051610] flex items-center justify-center text-white">
@@ -32,5 +36,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         );
     }
 
-    return <>{children}</>;
+    return (
+        <div className="min-h-screen bg-[#051610] pb-20 md:pb-0">
+            {children}
+            <MobileNav />
+        </div>
+    );
 }
