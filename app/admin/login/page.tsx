@@ -97,19 +97,6 @@ export default function LoginPage() {
         }
     };
 
-    const seleccionarPerfilDemo = (tipo: 'admin' | 'jortiz' | 'operador') => {
-        if (tipo === 'admin') {
-            setUsuario('admin');
-            setPassword('123456');
-        } else if (tipo === 'jortiz') {
-            setUsuario('jortiz');
-            setPassword('123456');
-        } else {
-            setUsuario('operador');
-            setPassword('123456');
-        }
-    };
-
     return (
         <div className="min-h-screen bg-[#051610] flex items-center justify-center p-4 text-slate-100 font-sans relative overflow-hidden">
         
@@ -182,33 +169,6 @@ export default function LoginPage() {
                     Autenticarse en el Sistema 🚀
                 </button>
             </form>
-
-            <div className="pt-2 border-t border-[#c5a059]/20 space-y-2">
-                <p className="text-[10px] text-slate-400 uppercase tracking-wider text-center font-bold">Perfiles de Prueba Rápidos:</p>
-                <div className="grid grid-cols-3 gap-2">
-                    <button 
-                        type="button" 
-                        onClick={() => seleccionarPerfilDemo('admin')} 
-                        className="py-2 px-1 bg-[#051610] border border-[#c5a059]/30 hover:border-[#c5a059] text-[#e6ca84] text-[11px] font-bold rounded-xl cursor-pointer transition-all text-center truncate"
-                    >
-                        👑 Admin
-                    </button>
-                    <button 
-                        type="button" 
-                        onClick={() => seleccionarPerfilDemo('jortiz')} 
-                        className="py-2 px-1 bg-[#051610] border border-[#c5a059]/30 hover:border-[#c5a059] text-[#e6ca84] text-[11px] font-bold rounded-xl cursor-pointer transition-all text-center truncate"
-                    >
-                        💼 J. Ortiz
-                    </button>
-                    <button 
-                        type="button" 
-                        onClick={() => seleccionarPerfilDemo('operador')} 
-                        className="py-2 px-1 bg-[#051610] border border-[#c5a059]/30 hover:border-[#c5a059] text-slate-300 text-[11px] font-bold rounded-xl cursor-pointer transition-all text-center truncate"
-                    >
-                        👤 Operador
-                    </button>
-                </div>
-            </div>
 
             <div className="pt-2 text-center">
                 <Link href="/" className="text-xs text-slate-400 hover:text-[#e6ca84] transition-colors font-medium">
