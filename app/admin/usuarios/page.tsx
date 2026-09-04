@@ -20,7 +20,8 @@ export default function GestionUsuariosPage() {
     const [usuarios, setUsuarios] = useState<UsuarioSistema[]>([]);
     const [filtroRol, setFiltroRol] = useState<'Todos' | 'Administrador' | 'Operador'>('Todos');
     
-    // Formulario nuevo usuario
+    // Formulario nuevo / editar usuario
+    const [idEditando, setIdEditando] = useState<string | null>(null);
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [usuario, setUsuario] = useState('');
@@ -28,12 +29,13 @@ export default function GestionUsuariosPage() {
     const [rol, setRol] = useState('Operador');
     const [permisos, setPermisos] = useState<string[]>(['Cotizaciones', 'Agenda']);
 
-    // Modal cambiar clave
+    // Modal cambiar clave rápida
     const [modalClaveAbierto, setModalClaveAbierto] = useState(false);
-    const [usuarioIdEditando, setUsuarioIdEditando] = useState<string | null>(null);
+    const [usuarioIdEditandoClave, setUsuarioIdEditandoClave] = useState<string | null>(null);
     const [nuevaClave, setNuevaClave] = useState('');
 
     const [mensajeExito, setMensajeExito] = useState(false);
+    const [textoExito, setTextoExito] = useState('');
 
     useEffect(() => {
         const guardados = localStorage.getItem('xtreme_usuarios_sistema');
@@ -99,34 +101,78 @@ export default function GestionUsuariosPage() {
         }
     };
 
-    const handleCrearUsuario = (e: React.FormEvent) => {
+    const handleGuardarUsuario = (e: React.FormEvent) => {
         e.preventDefault();
         if (!nombre || !usuario || !pass) return;
 
-        const nuevo: UsuarioSistema = {
-            id: Date.now().toString(),
-            nombre,
-            email: email || `${usuario}@xtremeclean.com`,
-            usuario: usuario.trim().toLowerCase(),
-            username: usuario.trim().toLowerCase(),
-            rol,
-            pass: pass.trim(),
-            password: pass.trim(),
-            permisos: rol === 'Administrador' ? ['Todo'] : permisos,
-            activo: true,
-            ultimoAcceso: 'Nunca'
-        };
+        if (idEditando) {
+            // Edición de usuario existente
+            const actualizados = usuarios.map(u => {
+                if (u.id === idEditando) {
+                    return {
+                        ...u,
+                        nombre,
+                        email: email || `${usuario}@xtremeclean.com`,
+                        usuario: usuario.trim().toLowerCase(),
+                        username: usuario.trim().toLowerCase(),
+                        rol,
+                        pass: pass.trim(),
+                        password: pass.trim(),
+                        permisos: rol === 'Administrador' ? ['Todo'] : permisos
+                    };
+                }
+                return u;
+            });
+            guardarStorage(actualizados);
+            registrarAuditoria(`Actualizó los datos del usuario: ${nombre}`);
+            setTextoExito('¡Usuario actualizado con éxito en el sistema!');
+            cancelarEdicion();
+        } else {
+            // Creación de nuevo usuario
+            const nuevo: UsuarioSistema = {
+                id: Date.now().toString(),
+                nombre,
+                email: email || `${usuario}@xtremeclean.com`,
+                usuario: usuario.trim().toLowerCase(),
+                username: usuario.trim().toLowerCase(),
+                rol,
+                pass: pass.trim(),
+                password: pass.trim(),
+                permisos: rol === 'Administrador' ? ['Todo'] : permisos,
+                activo: true,
+                ultimoAcceso: 'Nunca'
+            };
 
-        const actualizados = [...usuarios, nuevo];
-        guardarStorage(actualizados);
-        registrarAuditoria(`Creó el usuario corporativo: ${nombre} (${rol})`);
+            const actualizados = [...usuarios, nuevo];
+            guardarStorage(actualizados);
+            registrarAuditoria(`Creó el usuario corporativo: ${nombre} (${rol})`);
+            setTextoExito('¡Nuevo usuario registrado y habilitado en el sistema!');
+            cancelarEdicion();
+        }
 
+        setMensajeExito(true);
+        setTimeout(() => setMensajeExito(false), 3000);
+    };
+
+    const prepararEdicion = (u: UsuarioSistema) => {
+        setIdEditando(u.id);
+        setNombre(u.nombre);
+        setEmail(u.email || '');
+        setUsuario(u.usuario || u.username || '');
+        setPass(u.pass || u.password || '');
+        setRol(u.rol);
+        setPermisos(u.permisos || []);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const cancelarEdicion = () => {
+        setIdEditando(null);
         setNombre('');
         setEmail('');
         setUsuario('');
         setPass('');
-        setMensajeExito(true);
-        setTimeout(() => setMensajeExito(false), 3000);
+        setRol('Operador');
+        setPermisos(['Cotizaciones', 'Agenda']);
     };
 
     const eliminarUsuario = (id: string, nombreU: string) => {
@@ -138,21 +184,21 @@ export default function GestionUsuariosPage() {
     };
 
     const abrirModalClave = (id: string) => {
-        setUsuarioIdEditando(id);
+        setUsuarioIdEditandoClave(id);
         setNuevaClave('');
         setModalClaveAbierto(true);
     };
 
     const guardarNuevaClave = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!nuevaClave || !usuarioIdEditando) return;
+        if (!nuevaClave || !usuarioIdEditandoClave) return;
 
-        const actualizados = usuarios.map(u => u.id === usuarioIdEditando ? { ...u, pass: nuevaClave.trim(), password: nuevaClave.trim() } : u);
+        const actualizados = usuarios.map(u => u.id === usuarioIdEditandoClave ? { ...u, pass: nuevaClave.trim(), password: nuevaClave.trim() } : u);
         guardarStorage(actualizados);
-        registrarAuditoria(`Actualizó la contraseña de credenciales para el usuario ID: ${usuarioIdEditando}`);
+        registrarAuditoria(`Actualizó la contraseña de credenciales para el usuario ID: ${usuarioIdEditandoClave}`);
         
         setModalClaveAbierto(false);
-        setUsuarioIdEditando(null);
+        setUsuarioIdEditandoClave(null);
         alert('¡Contraseña actualizada con éxito en el sistema!');
     };
 
@@ -181,20 +227,27 @@ export default function GestionUsuariosPage() {
         {mensajeExito && (
             <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-3 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            ¡Nuevo usuario registrado y habilitado en el sistema!
+            {textoExito}
             </div>
         )}
 
         {/* CONTENEDOR EN GRILLA */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {/* FORMULARIO NUEVO USUARIO */}
+            {/* FORMULARIO NUEVO / EDITAR USUARIO */}
             <div className="lg:col-span-5 bg-[#09261d] border border-[#c5a059]/30 p-6 sm:p-8 rounded-3xl shadow-2xl">
-            <h3 className="font-bold text-base text-[#e6ca84] mb-4 border-b border-[#c5a059]/20 pb-2">
-                ✨ Registrar Nuevo Usuario
-            </h3>
+            <div className="flex justify-between items-center mb-4 border-b border-[#c5a059]/20 pb-2">
+                <h3 className="font-bold text-base text-[#e6ca84]">
+                    {idEditando ? '✏️ Editar Usuario' : '✨ Registrar Nuevo Usuario'}
+                </h3>
+                {idEditando && (
+                    <button type="button" onClick={cancelarEdicion} className="text-[10px] text-red-400 font-bold hover:underline">
+                        Cancelar Edición
+                    </button>
+                )}
+            </div>
 
-            <form onSubmit={handleCrearUsuario} className="space-y-4">
+            <form onSubmit={handleGuardarUsuario} className="space-y-4">
                 <div>
                 <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Nombre Completo</label>
                 <input type="text" required placeholder="Ej. Carlos Gómez" className="w-full p-3 bg-[#051610] border border-[#c5a059]/30 rounded-xl text-white text-xs focus:border-[#c5a059] focus:outline-none" value={nombre} onChange={e => setNombre(e.target.value)} />
@@ -247,7 +300,7 @@ export default function GestionUsuariosPage() {
                 )}
 
                 <button type="submit" className="w-full py-3.5 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-lg cursor-pointer hover:brightness-110 transition-all text-xs">
-                Registrar Usuario Funcional 🚀
+                {idEditando ? 'Guardar Cambios 💾' : 'Registrar Usuario Funcional 🚀'}
                 </button>
             </form>
             </div>
@@ -291,15 +344,18 @@ export default function GestionUsuariosPage() {
                         {u.rol}
                         </span>
                         <span className="text-xs text-slate-400 font-mono">
-                        Usuario: <strong className="text-white">{u.usuario}</strong>
+                        Usuario: <strong className="text-white">{u.usuario || u.username}</strong>
                         </span>
                     </div>
                     <div className="text-[11px] text-slate-400 mt-1">
-                        Permisos: <span className="text-slate-300">{u.permisos.join(', ')}</span> • Último acceso: {u.ultimoAcceso}
+                        Permisos: <span className="text-slate-300">{u.permisos ? u.permisos.join(', ') : 'Todo'}</span> • Último acceso: {u.ultimoAcceso}
                     </div>
                     </div>
 
-                    <div className="flex gap-2 w-full sm:w-auto justify-end">
+                    <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+                    <button onClick={() => prepararEdicion(u)} className="px-3 py-1.5 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-slate-200 text-xs font-bold rounded-xl cursor-pointer transition-all">
+                        Editar
+                    </button>
                     <button onClick={() => abrirModalClave(u.id)} className="px-3 py-1.5 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] text-xs font-bold rounded-xl cursor-pointer transition-all">
                         Cambiar Clave
                     </button>
