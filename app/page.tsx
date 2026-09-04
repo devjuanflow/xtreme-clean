@@ -207,34 +207,28 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#051610] text-slate-100 font-sans selection:bg-[#c5a059] selection:text-slate-950">
       
-      {/* HEADER */}
+      {/* HEADER ADAPTADO MÓVIL Y PC */}
       <header className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/95 backdrop-blur-md z-50">
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2">
           {config.logoTipo === 'imagen' && config.logoImagenUrl ? (
-            <img src={config.logoImagenUrl} alt="Logo" className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xl" />
+            <img src={config.logoImagenUrl} alt="Logo" className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xl" />
           ) : (
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#c5a059] to-[#e6ca84] flex items-center justify-center text-slate-950 font-black text-base sm:text-lg shadow-xl">
+            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-[#c5a059] to-[#e6ca84] flex items-center justify-center text-slate-950 font-black text-sm sm:text-lg shadow-xl">
               {config.logoTexto || 'XC'}
             </div>
           )}
-          <div>
+          <div className="hidden xs:block">
             <span className="block font-black text-white text-xs sm:text-lg tracking-wider">{config.nombreEmpresa || 'XTREME CLEAN'}</span>
-            <span className="block text-[8px] sm:text-[10px] text-[#e6ca84] uppercase tracking-widest font-semibold">{config.subtituloEmpresa || 'LAVANDERÍA DE MUEBLES'}</span>
+            <span className="block text-[7px] sm:text-[10px] text-[#e6ca84] uppercase tracking-widest font-semibold">{config.subtituloEmpresa || 'LAVANDERÍA DE MUEBLES'}</span>
           </div>
         </div>
 
-        <nav className="flex items-center gap-2 sm:gap-6 text-[9px] sm:text-xs font-bold uppercase tracking-widest text-slate-300">
-          <a href="#servicios" className="hover:text-[#e6ca84] transition-colors">Servicios</a>
-          <a href="#galeria" className="hover:text-[#e6ca84] transition-colors">Resultados</a>
-          <a href="#cotizador" className="hover:text-[#e6ca84] transition-colors">Cotizador</a>
-          <button 
-            onClick={() => setModalWhatsAppAbierto(true)}
-            className="px-2 py-1.5 sm:px-4 sm:py-2.5 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-lg text-[9px] sm:text-xs flex items-center gap-1 cursor-pointer hover:brightness-110"
-          >
-            <span>💬</span> <span className="hidden xs:inline">WhatsApp</span>
-          </button>
-          <Link href="/admin/login" className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md text-[9px] sm:text-xs">
-            🔒 Admin
+        <nav className="flex items-center gap-1.5 sm:gap-6 text-[8.5px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest text-slate-300">
+          <a href="#servicios" className="hover:text-[#e6ca84] transition-colors px-1">Servicios</a>
+          <a href="#galeria" className="hover:text-[#e6ca84] transition-colors px-1">Resultados</a>
+          <a href="#cotizador" className="hover:text-[#e6ca84] transition-colors px-1">Cotizador</a>
+          <Link href="/admin/login" className="px-2 py-1.5 sm:px-4 sm:py-2 bg-[#09261d] hover:bg-[#0d3b2d] border border-[#c5a059]/40 text-[#e6ca84] rounded-xl transition-all shadow-md flex items-center gap-1">
+            <span>🔒</span> <span>Admin</span>
           </Link>
         </nav>
       </header>
