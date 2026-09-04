@@ -467,8 +467,8 @@ export default function LandingPage() {
                     <div className="text-2xl sm:text-3xl font-black text-[#e6ca84] mt-0.5">${calcularTotal().toLocaleString()} COP</div>
                   )}
                 </div>
-                <button type="submit" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-xl text-xs">
-                  Solicitar por WhatsApp 💬
+                <button type="submit" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-extrabold rounded-xl shadow-xl text-xs flex items-center justify-center gap-2">
+                  <span>💬</span> WhatsApp
                 </button>
               </div>
             </form>
