@@ -207,8 +207,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#051610] text-slate-100 font-sans selection:bg-[#c5a059] selection:text-slate-950 pb-20">
       
-      {/* HEADER: Logo XC a la izquierda */}
-      <header className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-18 sm:h-24 flex items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/95 backdrop-blur-md z-50">
+      {/* HEADER: Logo XC a la izquierda y Botón WhatsApp enfrente (arriba) */}
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-24 flex items-center justify-between border-b border-[#c5a059]/20 sticky top-0 bg-[#051610]/95 backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
           {config.logoTipo === 'imagen' && config.logoImagenUrl ? (
             <img src={config.logoImagenUrl} alt="Logo" className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xl" />
@@ -218,6 +218,15 @@ export default function LandingPage() {
             </div>
           )}
         </div>
+
+        {/* Botón WhatsApp frente a XC */}
+        <button
+          onClick={() => setModalWhatsAppAbierto(true)}
+          className="px-4 py-2 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 font-black text-xs rounded-xl shadow-lg flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
+        >
+          <span>💬</span>
+          <span>WhatsApp</span>
+        </button>
 
         <nav className="hidden md:flex items-center gap-2 sm:gap-6 text-[9.5px] sm:text-xs font-bold uppercase tracking-wider text-slate-300">
           <a href="#servicios" className="hover:text-[#e6ca84] transition-colors">Servicios</a>
@@ -686,22 +695,6 @@ export default function LandingPage() {
         <p className="font-bold text-[#e6ca84]">🕒 Horario de Atención: {config.horario}</p>
         <p>{config.textoFooter}</p>
       </footer>
-
-      {/* BOTÓN FLOTANTE DE WHATSAPP (RESTAURADO) */}
-      <button 
-        onClick={() => {
-          if (asesoresWp.length > 1) {
-            setModalWhatsAppAbierto(true);
-          } else {
-            const tel = asesoresWp[0]?.telefono || config.telefonoContacto || '573001234567';
-            window.open(`https://wa.me/${tel}?text=${encodeURIComponent('Hola, deseo recibir asesoría sobre limpieza de muebles.')}`, '_blank');
-          }
-        }}
-        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 bg-gradient-to-r from-[#c5a059] to-[#e6ca84] text-slate-950 px-4 py-3 rounded-full shadow-2xl font-black text-xs flex items-center gap-2 z-40 hover:scale-105 transition-all border border-white/30"
-      >
-        <span className="text-base">💬</span>
-        <span>WhatsApp</span>
-      </button>
 
       {/* MENÚ INFERIOR MÓVIL (BOTTOM NAVIGATION) FIJO */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#09261d]/95 backdrop-blur-md border-t border-[#c5a059]/30 px-2 py-3 flex justify-around items-center z-50 shadow-2xl">
