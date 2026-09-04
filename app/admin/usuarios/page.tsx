@@ -7,10 +7,10 @@ interface UsuarioSistema {
     nombre: string;
     email: string;
     usuario: string;
-    username?: string;
+    username: string;
     rol: string;
     pass: string;
-    password?: string;
+    password: string;
     permisos: string[];
     activo: boolean;
     ultimoAcceso: string;
@@ -38,11 +38,26 @@ export default function GestionUsuariosPage() {
     const [textoExito, setTextoExito] = useState('');
 
     useEffect(() => {
+        cargarUsuariosDesdeStorage();
+    }, []);
+
+    const cargarUsuariosDesdeStorage = () => {
         const guardados = localStorage.getItem('xtreme_usuarios_sistema');
         if (guardados) {
             try {
-                setUsuarios(JSON.parse(guardados));
-            } catch {}
+                const parsed = JSON.parse(guardados);
+                // Normalizar datos para que todas las propiedades coincidan siempre
+                const normalizados = parsed.map((u: any) => ({
+                    ...u,
+                    usuario: u.usuario || u.username || 'admin',
+                    username: u.username || u.usuario || 'admin',
+                    pass: u.pass || u.password || '123456',
+                    password: u.password || u.pass || '123456'
+                }));
+                setUsuarios(normalizados);
+            } catch {
+                setUsuarios([]);
+            }
         } else {
             const iniciales: UsuarioSistema[] = [
                 { id: '1', nombre: 'Admin Principal', email: 'admin@xtremeclean.com', usuario: 'admin', username: 'admin', rol: 'Administrador', pass: '123456', password: '123456', permisos: ['Todo'], activo: true, ultimoAcceso: 'Hoy, 10:30 AM' },
@@ -51,7 +66,7 @@ export default function GestionUsuariosPage() {
             setUsuarios(iniciales);
             localStorage.setItem('xtreme_usuarios_sistema', JSON.stringify(iniciales));
         }
-    }, []);
+    };
 
     const guardarStorage = (nuevaLista: UsuarioSistema[]) => {
         setUsuarios(nuevaLista);
@@ -105,19 +120,22 @@ export default function GestionUsuariosPage() {
         e.preventDefault();
         if (!nombre || !usuario || !pass) return;
 
+        const limpioUsuario = usuario.trim().toLowerCase();
+        const limpiaPass = pass.trim();
+
         if (idEditando) {
             // Edición de usuario existente
             const actualizados = usuarios.map(u => {
                 if (u.id === idEditando) {
                     return {
                         ...u,
-                        nombre,
-                        email: email || `${usuario}@xtremeclean.com`,
-                        usuario: usuario.trim().toLowerCase(),
-                        username: usuario.trim().toLowerCase(),
+                        nombre: nombre.trim(),
+                        email: email.trim() || `${limpioUsuario}@xtremeclean.com`,
+                        usuario: limpioUsuario,
+                        username: limpioUsuario,
                         rol,
-                        pass: pass.trim(),
-                        password: pass.trim(),
+                        pass: limpiaPass,
+                        password: limpiaPass,
                         permisos: rol === 'Administrador' ? ['Todo'] : permisos
                     };
                 }
@@ -125,19 +143,19 @@ export default function GestionUsuariosPage() {
             });
             guardarStorage(actualizados);
             registrarAuditoria(`Actualizó los datos del usuario: ${nombre}`);
-            setTextoExito('¡Usuario actualizado con éxito en el sistema!');
+            setTextoExito('¡Usuario actualizado y guardado con éxito!');
             cancelarEdicion();
         } else {
             // Creación de nuevo usuario
             const nuevo: UsuarioSistema = {
                 id: Date.now().toString(),
-                nombre,
-                email: email || `${usuario}@xtremeclean.com`,
-                usuario: usuario.trim().toLowerCase(),
-                username: usuario.trim().toLowerCase(),
+                nombre: nombre.trim(),
+                email: email.trim() || `${limpioUsuario}@xtremeclean.com`,
+                usuario: limpioUsuario,
+                username: limpioUsuario,
                 rol,
-                pass: pass.trim(),
-                password: pass.trim(),
+                pass: limpiaPass,
+                password: limpiaPass,
                 permisos: rol === 'Administrador' ? ['Todo'] : permisos,
                 activo: true,
                 ultimoAcceso: 'Nunca'
@@ -146,12 +164,12 @@ export default function GestionUsuariosPage() {
             const actualizados = [...usuarios, nuevo];
             guardarStorage(actualizados);
             registrarAuditoria(`Creó el usuario corporativo: ${nombre} (${rol})`);
-            setTextoExito('¡Nuevo usuario registrado y habilitado en el sistema!');
+            setTextoExito('¡Nuevo usuario registrado y habilitado con éxito!');
             cancelarEdicion();
         }
 
         setMensajeExito(true);
-        setTimeout(() => setMensajeExito(false), 3000);
+        setTimeout(() => setMensajeExito(false), 3500);
     };
 
     const prepararEdicion = (u: UsuarioSistema) => {
@@ -193,13 +211,25 @@ export default function GestionUsuariosPage() {
         e.preventDefault();
         if (!nuevaClave || !usuarioIdEditandoClave) return;
 
-        const actualizados = usuarios.map(u => u.id === usuarioIdEditandoClave ? { ...u, pass: nuevaClave.trim(), password: nuevaClave.trim() } : u);
+        const claveLimpia = nuevaClave.trim();
+        const actualizados = usuarios.map(u => {
+            if (u.id === usuarioIdEditandoClave) {
+                return { 
+                    ...u, 
+                    pass: claveLimpia, 
+                    password: claveLimpia 
+                };
+            }
+            return u;
+        });
+
         guardarStorage(actualizados);
-        registrarAuditoria(`Actualizó la contraseña de credenciales para el usuario ID: ${usuarioIdEditandoClave}`);
+        registrarAuditoria(`Actualizó la contraseña para el usuario ID: ${usuarioIdEditandoClave}`);
         
         setModalClaveAbierto(false);
         setUsuarioIdEditandoClave(null);
-        alert('¡Contraseña actualizada con éxito en el sistema!');
+        setNuevaClave('');
+        alert('¡Contraseña actualizada y guardada con éxito en el sistema!');
     };
 
     const usuariosFiltrados = usuarios.filter(u => {
