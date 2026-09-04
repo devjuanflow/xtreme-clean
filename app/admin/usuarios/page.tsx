@@ -7,14 +7,16 @@ interface UsuarioSistema {
     nombre: string;
     email: string;
     usuario: string;
+    username?: string;
     rol: string;
     pass: string;
+    password?: string;
     permisos: string[];
     activo: boolean;
     ultimoAcceso: string;
-    }
+}
 
-    export default function GestionUsuariosPage() {
+export default function GestionUsuariosPage() {
     const [usuarios, setUsuarios] = useState<UsuarioSistema[]>([]);
     const [filtroRol, setFiltroRol] = useState<'Todos' | 'Administrador' | 'Operador'>('Todos');
     
@@ -36,16 +38,16 @@ interface UsuarioSistema {
     useEffect(() => {
         const guardados = localStorage.getItem('xtreme_usuarios_sistema');
         if (guardados) {
-        try {
-            setUsuarios(JSON.parse(guardados));
-        } catch {}
+            try {
+                setUsuarios(JSON.parse(guardados));
+            } catch {}
         } else {
-        const iniciales: UsuarioSistema[] = [
-            { id: '1', nombre: 'Admin Principal', email: 'admin@xtremeclean.com', usuario: 'admin', rol: 'Administrador', pass: '123456', permisos: ['Todo'], activo: true, ultimoAcceso: 'Hoy, 10:30 AM' },
-            { id: '2', nombre: 'Juan Ortiz', email: 'ceo@hotmail.com', usuario: 'jortiz', rol: 'Administrador', pass: '123456', permisos: ['Todo'], activo: true, ultimoAcceso: 'Ayer, 04:15 PM' }
-        ];
-        setUsuarios(iniciales);
-        localStorage.setItem('xtreme_usuarios_sistema', JSON.stringify(iniciales));
+            const iniciales: UsuarioSistema[] = [
+                { id: '1', nombre: 'Admin Principal', email: 'admin@xtremeclean.com', usuario: 'admin', username: 'admin', rol: 'Administrador', pass: '123456', password: '123456', permisos: ['Todo'], activo: true, ultimoAcceso: 'Hoy, 10:30 AM' },
+                { id: '2', nombre: 'Juan Ortiz', email: 'ceo@hotmail.com', usuario: 'jortiz', username: 'jortiz', rol: 'Administrador', pass: '123456', password: '123456', permisos: ['Todo'], activo: true, ultimoAcceso: 'Ayer, 04:15 PM' }
+            ];
+            setUsuarios(iniciales);
+            localStorage.setItem('xtreme_usuarios_sistema', JSON.stringify(iniciales));
         }
     }, []);
 
@@ -59,24 +61,24 @@ interface UsuarioSistema {
         let nombreUsuario = 'Admin Principal';
         let rolUsuario = 'Administrador';
         if (rawUser) {
-        try {
-            const u = JSON.parse(rawUser);
-            nombreUsuario = u.nombre;
-            rolUsuario = u.rol;
-        } catch {}
+            try {
+                const u = JSON.parse(rawUser);
+                nombreUsuario = u.nombre;
+                rolUsuario = u.rol;
+            } catch {}
         }
 
         const logsGuardados = localStorage.getItem('xtreme_logs_auditoria') || '[]';
         try {
-        const lista = JSON.parse(logsGuardados);
-        const nuevoLog = {
-            id: Date.now().toString(),
-            usuario: nombreUsuario,
-            rol: rolUsuario,
-            accion: accion,
-            fecha: new Date().toLocaleString()
-        };
-        localStorage.setItem('xtreme_logs_auditoria', JSON.stringify([nuevoLog, ...lista]));
+            const lista = JSON.parse(logsGuardados);
+            const nuevoLog = {
+                id: Date.now().toString(),
+                usuario: nombreUsuario,
+                rol: rolUsuario,
+                accion: accion,
+                fecha: new Date().toLocaleString()
+            };
+            localStorage.setItem('xtreme_logs_auditoria', JSON.stringify([nuevoLog, ...lista]));
         } catch {}
     };
 
@@ -84,16 +86,16 @@ interface UsuarioSistema {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%!';
         let passTemp = '';
         for (let i = 0; i < 8; i++) {
-        passTemp += chars.charAt(Math.floor(Math.random() * chars.length));
+            passTemp += chars.charAt(Math.floor(Math.random() * chars.length));
         }
         setPass(passTemp);
     };
 
     const handleCheckboxPermiso = (permiso: string) => {
         if (permisos.includes(permiso)) {
-        setPermisos(permisos.filter(p => p !== permiso));
+            setPermisos(permisos.filter(p => p !== permiso));
         } else {
-        setPermisos([...permisos, permiso]);
+            setPermisos([...permisos, permiso]);
         }
     };
 
@@ -102,15 +104,17 @@ interface UsuarioSistema {
         if (!nombre || !usuario || !pass) return;
 
         const nuevo: UsuarioSistema = {
-        id: Date.now().toString(),
-        nombre,
-        email: email || `${usuario}@xtremeclean.com`,
-        usuario,
-        rol,
-        pass,
-        permisos: rol === 'Administrador' ? ['Todo'] : permisos,
-        activo: true,
-        ultimoAcceso: 'Nunca'
+            id: Date.now().toString(),
+            nombre,
+            email: email || `${usuario}@xtremeclean.com`,
+            usuario: usuario.trim().toLowerCase(),
+            username: usuario.trim().toLowerCase(),
+            rol,
+            pass: pass.trim(),
+            password: pass.trim(),
+            permisos: rol === 'Administrador' ? ['Todo'] : permisos,
+            activo: true,
+            ultimoAcceso: 'Nunca'
         };
 
         const actualizados = [...usuarios, nuevo];
@@ -127,9 +131,9 @@ interface UsuarioSistema {
 
     const eliminarUsuario = (id: string, nombreU: string) => {
         if (confirm(`¿Estás seguro de revocar el acceso del usuario "${nombreU}"?`)) {
-        const filtrados = usuarios.filter(u => u.id !== id);
-        guardarStorage(filtrados);
-        registrarAuditoria(`Revocó el acceso al usuario: ${nombreU}`);
+            const filtrados = usuarios.filter(u => u.id !== id);
+            guardarStorage(filtrados);
+            registrarAuditoria(`Revocó el acceso al usuario: ${nombreU}`);
         }
     };
 
@@ -143,7 +147,7 @@ interface UsuarioSistema {
         e.preventDefault();
         if (!nuevaClave || !usuarioIdEditando) return;
 
-        const actualizados = usuarios.map(u => u.id === usuarioIdEditando ? { ...u, pass: nuevaClave } : u);
+        const actualizados = usuarios.map(u => u.id === usuarioIdEditando ? { ...u, pass: nuevaClave.trim(), password: nuevaClave.trim() } : u);
         guardarStorage(actualizados);
         registrarAuditoria(`Actualizó la contraseña de credenciales para el usuario ID: ${usuarioIdEditando}`);
         
