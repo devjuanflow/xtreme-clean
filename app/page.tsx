@@ -49,6 +49,13 @@ export default function LandingPage() {
   const [sliderPos, setSliderPos] = useState(50);
 
   useEffect(() => {
+    // Registro del Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then((reg) => console.log('Service Worker registrado con éxito:', reg.scope))
+        .catch((err) => console.error('Error al registrar el Service Worker:', err));
+    }
+
     const data = obtenerConfigWeb();
     if (data) setConfig(data);
 

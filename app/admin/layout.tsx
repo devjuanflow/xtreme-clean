@@ -8,13 +8,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [verificado, setVerificado] = useState(false);
 
     useEffect(() => {
-        // Si estamos en la página de login, permitimos el acceso libre
         if (pathname === '/admin/login') {
             setVerificado(true);
             return;
         }
 
-        // Validamos la sesión activa usando xtreme_usuario_actual
         const auth = localStorage.getItem('xtreme_usuario_actual');
         if (!auth) {
             router.push('/admin/login');
@@ -23,7 +21,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
     }, [pathname, router]);
 
-    // Pantalla de carga mientras se valida el almacenamiento local
     if (!verificado && pathname !== '/admin/login') {
         return (
             <div className="min-h-screen bg-[#051610] flex items-center justify-center text-white">
